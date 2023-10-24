@@ -6,17 +6,17 @@ The Investment Management REST API is a Spring Boot application that exposes a s
 ## Features
 ### 1. Retrieve Investor Information
 
-* Endpoint: /api/investors/{investorId}
+* Endpoint: /investors/{id}
 * HTTP Method: GET
 * Description: Retrieves personal, address, and contact information for a specific investor.
 
 ### 2. Retrieve Investor's Investments
-* Endpoint: /api/investors/{investorId}/investments
+* Endpoint: /investments/{{investorId}}
 * HTTP Method: GET
 * Description: Retrieves a list of products in which the investor has invested. Each product provides a product ID, type (RETIREMENT or SAVINGS), name, and current balance.
 
 ### 3. Create a New Withdrawal
-* Endpoint: /api/investors/{investorId}/investments/{productId}/withdrawals
+* Endpoint: /api/withdrawals/do-withdrawal
 
 * HTTP Method: POST
 
