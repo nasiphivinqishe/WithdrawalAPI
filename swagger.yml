@@ -1,0 +1,165 @@
+openapi: 3.0.3
+info:
+  title: Investment Withdrwals API
+  description: |-
+    The Investment Management REST API is a Spring Boot application that exposes a secure REST API for managing investor information and their investments. It allows consumers to retrieve investor details, list their investments, and create new withdrawals, subject to specific validation rules.
+
+
+  contact:
+    email: nasiphivinqishe@gmail.com
+  version: 1.0.11
+servers:
+  - url: https://localhost:8080/api/
+tags:
+  - name: Investors
+    description: Retrieves personal, address, and contact information for a specific investor.
+  - name: Investments
+    description: Retrieves a list of products in which the investor has invested. Each product provides a product ID, type (RETIREMENT or SAVINGS), name, and current balance.
+  - name: Withdrawals
+    description: Creates a new withdrawal for a given product. The following validations are applied      
+      * If the product is RETIREMENT, the investor's age must be greater than 65.
+      * If the withdrawal amount is greater than the current balance, a validation error is returned.
+      * Investors cannot withdraw more than 90% of the current balance.
+paths:
+  /withdrawals/do-withdrawal:
+    post:
+      tags:
+        - Withdrawals
+      summary: Used to perform withdrawal on some investment
+      description: Used to perform withdrawal on some investment
+      operationId: doWithdrawal
+      requestBody:
+        description: For creation of withdrawal
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Withdrawal"
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Withdrawal"
+
+        "405":
+          description: Invalid input
+
+  /investments/{investorId}:
+    get:
+      tags:
+        - Investments
+      summary: Find investments by investor id
+      description: Returns a all the investments for an investor
+      operationId: getInvestmentByInvestorId
+      parameters:
+        - name: investorId
+          in: path
+          description: ID of of investor to use to get investments
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Investment"
+        "400":
+          description: Invalid Investor id supplied
+        "404":
+          description: No investments found
+
+  /investors/{id}:
+    get:
+      tags:
+        - Investors
+      summary: Get investor by investor Id
+      description: Get investor by investor Id
+      operationId: getInvestorById
+      parameters:
+        - name: id
+          in: path
+          description: "The id for investor that is used to get their details. "
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Investor"
+        "400":
+          description: Invalid id supplied
+        "404":
+          description: Investor not found
+
+components:
+  schemas:
+    Withdrawal:
+      type: object
+      properties:
+        withdrawalAmount:
+          type: integer
+          format: int64
+          example: 100
+        investmentId:
+          type: integer
+          format: int64
+          example: 111
+        dateAndTime:
+          type: string
+          format: date-time
+
+    Investor:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 4
+        name:
+          type: string
+          example: John
+        surname:
+          type: string
+          example: Doe
+        dob:
+          type: string
+          format: date
+        address:
+          type: string
+          example: 437 MoodMead Mews, Johannesburg
+
+    Investment:
+      type: object
+      properties:
+        investorId:
+          type: integer
+          format: int64
+          example: 11
+        productType:
+          type: string
+          description: It tells the type of the investment.
+          enum:
+            - RETIREMENT
+            - SAVINGS
+        currentBalance:
+          type: integer
+          format: int64
+          example: 4
+
+  requestBodies:
+    Withdrawal:
+      description: Withdrawal object that needs to be used to perform withdrawal
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Withdrawal"
